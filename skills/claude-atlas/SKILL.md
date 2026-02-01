@@ -1,10 +1,10 @@
 ---
 name: claude-atlas
-description: File index for Claude Code - checks local index before using Glob/Grep to find files. Reduces search time and context usage.
+description: Use this proactively BEFORE any Glob, Grep, or Task(Explore) for file lookup or codebase navigation. Checks .claude/file-index.json first to find files by tags, reducing search time and context usage.
 license: MIT
 metadata:
   author: Krab00
-  tags: index, search, optimization, file-map, caching
+  tags: index, search, optimization, file-map, caching, lookup, navigation
 ---
 
 # claude-atlas
