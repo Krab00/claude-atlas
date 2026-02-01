@@ -134,22 +134,29 @@ File hash detects changes:
 ## Plugin structure
 
 ```
-claude-atlas/
+claude-atlas/                    # Plugin (installed once)
 ├── .claude-plugin/
-│   └── marketplace.json   # Plugin configuration
+│   └── marketplace.json
 ├── hooks/
-│   ├── hooks.json         # Hook configuration
-│   └── check-index.sh     # PreToolUse hook script
+│   ├── hooks.json
+│   └── check-index.sh
 ├── skills/
 │   └── claude-atlas/
-│       └── SKILL.md       # Main skill
+│       └── SKILL.md
 ├── scripts/
-│   └── init.sh            # Project initialization
+│   └── init.sh
 ├── examples/
-│   ├── file-index.json    # Example index
-│   └── atlas-ignore       # Example ignore file
-├── README.md
-└── LICENSE
+└── README.md
+
+your-project/                    # Your project (after init)
+└── .claude/
+    ├── file-index.json          # File index with tags
+    ├── atlas-stats.json         # Hit/miss statistics
+    ├── atlas-ignore             # Patterns to ignore
+    └── graph/                   # Dependency graph
+        ├── oauth.json           # Per-file dependencies
+        ├── config.json
+        └── _reverse.json        # Reverse lookup
 ```
 
 ## Hooks
@@ -161,6 +168,36 @@ The plugin includes a `PreToolUse` hook that:
 - Updates hit/miss statistics automatically
 
 This means the index is checked automatically - no need to invoke the skill manually.
+
+## Dependency Graph
+
+The plugin tracks file dependencies in `.claude/graph/`:
+
+```
+.claude/graph/
+├── oauth.json              # {"deps": ["./config", "jsonwebtoken"]}
+├── login-controller.json   # {"deps": ["./oauth", "./user-service"]}
+└── _reverse.json           # {"oauth": ["login-controller", "api-middleware"]}
+```
+
+### How it helps
+
+When you modify a file, Claude:
+1. Checks what imports that file (via `_reverse.json`)
+2. Warns you: "This file is imported by X, Y, Z - changes may affect them"
+3. After edit, updates the dependency graph
+
+### Benefits
+
+- **Safer refactoring** - know impact before changing
+- **Better context** - understand file relationships
+- **Faster navigation** - "what uses this module?" without Grep
+
+### Lazy loading
+
+- Only loads nodes needed for current operation
+- `_reverse.json` rebuilt on demand when stale
+- No full graph in context = minimal overhead
 
 ## License
 

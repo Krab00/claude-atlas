@@ -7,6 +7,8 @@ CLAUDE_DIR=".claude"
 INDEX_FILE="$CLAUDE_DIR/file-index.json"
 STATS_FILE="$CLAUDE_DIR/atlas-stats.json"
 IGNORE_FILE="$CLAUDE_DIR/atlas-ignore"
+GRAPH_DIR="$CLAUDE_DIR/graph"
+REVERSE_FILE="$GRAPH_DIR/_reverse.json"
 
 echo "Initializing claude-atlas..."
 
@@ -84,10 +86,28 @@ else
     echo "• $IGNORE_FILE already exists"
 fi
 
+# Create graph directory for dependency tracking
+if [ ! -d "$GRAPH_DIR" ]; then
+    mkdir -p "$GRAPH_DIR"
+    echo "✓ Created $GRAPH_DIR/"
+else
+    echo "• $GRAPH_DIR/ already exists"
+fi
+
+# Create _reverse.json for reverse dependency lookup
+if [ ! -f "$REVERSE_FILE" ]; then
+    echo '{}' > "$REVERSE_FILE"
+    echo "✓ Created $REVERSE_FILE"
+else
+    echo "• $REVERSE_FILE already exists"
+fi
+
 echo ""
 echo "claude-atlas initialized!"
 echo ""
 echo "Now Claude Code will:"
 echo "  • Check index before using Glob/Grep"
 echo "  • Automatically add read files to index"
+echo "  • Track dependencies between files"
+echo "  • Warn about impact when modifying files"
 echo "  • Track hit/miss statistics"
