@@ -1,0 +1,37 @@
+{
+  "readme": {
+    "path": "README.md",
+    "tags": "readme documentation install usage structure license overview plugin",
+    "hash": "ec6b82b2b40be257d93e31675721f18255810615"
+  },
+  "license": {
+    "path": "LICENSE",
+    "tags": "license mit open source",
+    "hash": "49a9563b6208f3f0dcfb09453bc41654d266fec4"
+  },
+  "skill": {
+    "path": "skills/claude-atlas/SKILL.md",
+    "tags": "skill claude code instructions lookup validate update stats onboarding",
+    "hash": "278f17843d5b059f525bcadabc34fdc8a1aeb458"
+  },
+  "init": {
+    "path": "scripts/init.sh",
+    "tags": "init initialize project setup create index stats ignore bash script",
+    "hash": "dd3387c567393a2c8213311a6b0d75ceb452aede"
+  },
+  "marketplace": {
+    "path": ".claude-plugin/marketplace.json",
+    "tags": "plugin config marketplace metadata owner version",
+    "hash": "c46deca89549f8b55086d08bc17d5547c591a4e7"
+  },
+  "example-index": {
+    "path": "examples/file-index.json",
+    "tags": "example sample index entries auth database api",
+    "hash": "0265f6c020f842a90ed5eae7f7df22eba053263f"
+  },
+  "example-ignore": {
+    "path": "examples/atlas-ignore",
+    "tags": "example ignore patterns gitignore node_modules dist",
+    "hash": "dccf853a0edf57c1c5a6e8213b3c00ec9ea845a1"
+  }
+}

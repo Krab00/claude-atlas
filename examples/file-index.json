@@ -1,0 +1,42 @@
+{
+  "auth": {
+    "path": "src/auth/oauth.ts",
+    "tags": "oauth google github login logout refresh token authentication passport session jwt",
+    "hash": "a1b2c3d4e5f6"
+  },
+  "database": {
+    "path": "src/db/connection.ts",
+    "tags": "postgres mysql connection pool query database prisma knex migrations",
+    "hash": "b2c3d4e5f6g7"
+  },
+  "api-routes": {
+    "path": "src/api/routes.ts",
+    "tags": "express router endpoints rest api http get post put delete middleware",
+    "hash": "c3d4e5f6g7h8"
+  },
+  "user-model": {
+    "path": "src/models/user.ts",
+    "tags": "user model schema validation email password profile avatar permissions roles",
+    "hash": "d4e5f6g7h8i9"
+  },
+  "email-service": {
+    "path": "src/services/email.ts",
+    "tags": "email sendgrid smtp template notification welcome reset password",
+    "hash": "e5f6g7h8i9j0"
+  },
+  "config": {
+    "path": "src/config/index.ts",
+    "tags": "config environment env variables dotenv settings database redis",
+    "hash": "f6g7h8i9j0k1"
+  },
+  "middleware-auth": {
+    "path": "src/middleware/auth.ts",
+    "tags": "middleware authentication jwt verify token protect route guard",
+    "hash": "g7h8i9j0k1l2"
+  },
+  "utils-crypto": {
+    "path": "src/utils/crypto.ts",
+    "tags": "crypto hash bcrypt password encrypt decrypt salt",
+    "hash": "h8i9j0k1l2m3"
+  }
+}

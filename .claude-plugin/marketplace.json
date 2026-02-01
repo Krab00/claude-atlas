@@ -1,0 +1,19 @@
+{
+	"name": "claude-atlas",
+	"owner": {
+		"name": "Krab00",
+		"url": "https://github.com/Krab00"
+	},
+	"metadata": {
+		"description": "File index for Claude Code - a map with descriptions of what's where in your project",
+		"version": "1.0.0"
+	},
+	"plugins": [
+		{
+			"name": "claude-atlas",
+			"description": "Reduces Glob/Grep usage by maintaining a local file index with tags. Claude checks the index first before searching.",
+			"source": "./",
+			"skills": ["./skills/claude-atlas"]
+		}
+	]
+}
