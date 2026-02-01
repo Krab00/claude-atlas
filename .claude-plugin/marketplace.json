@@ -13,7 +13,8 @@
 			"name": "claude-atlas",
 			"description": "MUST be used proactively BEFORE Glob, Grep, or Task(Explore) for any file search or codebase navigation. Checks local file index first to reduce context usage.",
 			"source": "./",
-			"skills": ["./skills/claude-atlas"]
+			"skills": ["./skills/claude-atlas"],
+			"hooks": "./hooks/hooks.json"
 		}
 	]
 }

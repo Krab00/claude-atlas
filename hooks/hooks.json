@@ -1,0 +1,18 @@
+{
+  "description": "Intercepts Glob/Grep to check file index first",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Glob|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-index.sh",
+            "timeout": 5,
+            "statusMessage": "Checking file index..."
+          }
+        ]
+      }
+    ]
+  }
+}

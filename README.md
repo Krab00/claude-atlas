@@ -15,13 +15,19 @@ Local file index with descriptions (tags). Claude checks the index first, then s
 
 ## Installation
 
-### From GitHub (recommended)
+### Add as marketplace (recommended)
 
-```bash
-claude install gh:Krab00/claude-atlas
+In Claude Code, run:
+```
+/plugin marketplace add Krab00/claude-atlas
 ```
 
-### Manually
+Then install the plugin:
+```
+/plugin install claude-atlas
+```
+
+### Manual installation
 
 ```bash
 git clone https://github.com/Krab00/claude-atlas.git ~/.claude/plugins/claude-atlas
@@ -44,10 +50,12 @@ After installing the plugin, in any project:
 
 ### How it works
 
-1. **Before each Glob/Grep** - Claude checks `.claude/file-index.json`
-2. **Found in index** - uses saved path (hit)
-3. **Not found** - searches normally, adds result to index (miss)
-4. **After reading a file** - automatically updates index
+1. **Hook intercepts Glob/Grep** - automatically checks `.claude/file-index.json`
+2. **Found in index** - adds matching paths as context (hit)
+3. **Not found** - searches normally, Claude adds result to index (miss)
+4. **After reading a file** - Claude automatically updates index
+
+The plugin uses a PreToolUse hook to intercept all Glob and Grep calls before they execute, checking the index first and providing matching entries as additional context.
 
 ## Index structure
 
@@ -129,6 +137,9 @@ File hash detects changes:
 claude-atlas/
 ├── .claude-plugin/
 │   └── marketplace.json   # Plugin configuration
+├── hooks/
+│   ├── hooks.json         # Hook configuration
+│   └── check-index.sh     # PreToolUse hook script
 ├── skills/
 │   └── claude-atlas/
 │       └── SKILL.md       # Main skill
@@ -140,6 +151,16 @@ claude-atlas/
 ├── README.md
 └── LICENSE
 ```
+
+## Hooks
+
+The plugin includes a `PreToolUse` hook that:
+- Intercepts all Glob and Grep calls
+- Searches `.claude/file-index.json` for matching entries
+- Adds matches as `additionalContext` before the tool executes
+- Updates hit/miss statistics automatically
+
+This means the index is checked automatically - no need to invoke the skill manually.
 
 ## License
 
