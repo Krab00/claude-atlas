@@ -1,12 +1,12 @@
 {
-	"name": "claude-atlas",
+	"name": "krab00-claude-plugins",
 	"owner": {
 		"name": "Krab00",
 		"url": "https://github.com/Krab00"
 	},
 	"metadata": {
-		"description": "File index for Claude Code - a map with descriptions of what's where in your project",
-		"version": "1.0.0"
+		"description": "Claude Code plugins by Krab00 - file indexing, TODO lists, and more",
+		"version": "1.1.0"
 	},
 	"plugins": [
 		{
@@ -15,6 +15,12 @@
 			"source": "./",
 			"skills": ["./skills/claude-atlas"],
 			"hooks": "./hooks/hooks.json"
+		},
+		{
+			"name": "claude-todo",
+			"description": "Project-local TODO list. Use when user says 'remember', 'todo', 'add to list', or asks 'what's on my list?'. Persists in .claude/todo.md.",
+			"source": "./",
+			"skills": ["./skills/claude-todo"]
 		}
 	]
 }

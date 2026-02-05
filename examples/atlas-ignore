@@ -1,8 +1,8 @@
-# Wzorce do ignorowania (składnia jak .gitignore)
-# Pliki pasujące do tych wzorców nie będą dodawane do indeksu
+# Patterns to ignore (syntax like .gitignore)
+# Files matching these patterns will not be added to the index
 
 # ===================
-# Zależności
+# Dependencies
 # ===================
 node_modules/
 vendor/
@@ -13,7 +13,7 @@ env/
 bower_components/
 
 # ===================
-# Build i output
+# Build and output
 # ===================
 dist/
 build/
@@ -25,7 +25,7 @@ target/
 *.chunk.js
 
 # ===================
-# Testy i coverage
+# Tests and coverage
 # ===================
 coverage/
 .nyc_output/
@@ -35,7 +35,7 @@ __pycache__/
 .jest/
 
 # ===================
-# IDE i edytory
+# IDE and editors
 # ===================
 .git/
 .idea/
@@ -52,7 +52,7 @@ Thumbs.db
 *.log
 
 # ===================
-# Cache i temp
+# Cache and temp
 # ===================
 .cache/
 .temp/
@@ -71,7 +71,7 @@ poetry.lock
 composer.lock
 
 # ===================
-# Generowane
+# Generated
 # ===================
 *.generated.*
 *.auto.*

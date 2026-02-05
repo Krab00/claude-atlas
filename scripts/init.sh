@@ -1,5 +1,5 @@
 #!/bin/bash
-# Initialize claude-atlas in current project
+# Initialize krab00-claude-plugins in current project
 
 set -e
 
@@ -9,8 +9,10 @@ STATS_FILE="$CLAUDE_DIR/atlas-stats.json"
 IGNORE_FILE="$CLAUDE_DIR/atlas-ignore"
 GRAPH_DIR="$CLAUDE_DIR/graph"
 REVERSE_FILE="$GRAPH_DIR/_reverse.json"
+TODO_FILE="$CLAUDE_DIR/todo.md"
+LISTS_DIR="$CLAUDE_DIR/lists"
 
-echo "Initializing claude-atlas..."
+echo "Initializing krab00-claude-plugins..."
 
 # Create .claude directory if it doesn't exist
 if [ ! -d "$CLAUDE_DIR" ]; then
@@ -102,12 +104,43 @@ else
     echo "• $REVERSE_FILE already exists"
 fi
 
+# Create todo.md for project TODO list
+if [ ! -f "$TODO_FILE" ]; then
+    cat > "$TODO_FILE" << 'EOF'
+# TODO
+
+## High
+
+## Normal
+
+## Low
+
+## Done
+EOF
+    echo "✓ Created $TODO_FILE"
+else
+    echo "• $TODO_FILE already exists"
+fi
+
+# Create lists directory for named TODO lists
+if [ ! -d "$LISTS_DIR" ]; then
+    mkdir -p "$LISTS_DIR"
+    echo "✓ Created $LISTS_DIR/"
+else
+    echo "• $LISTS_DIR/ already exists"
+fi
+
 echo ""
-echo "claude-atlas initialized!"
+echo "krab00-claude-plugins initialized!"
 echo ""
-echo "Now Claude Code will:"
+echo "claude-atlas:"
 echo "  • Check index before using Glob/Grep"
 echo "  • Automatically add read files to index"
 echo "  • Track dependencies between files"
 echo "  • Warn about impact when modifying files"
-echo "  • Track hit/miss statistics"
+echo ""
+echo "claude-todo:"
+echo "  • Use :TODO: keyword to trigger, e.g. ':TODO: fix login bug'"
+echo "  • ':TODO: show' to see your list"
+echo "  • ':TODO: create a list' to make named lists"
+echo "  • ':TODO: done with X' to mark complete"

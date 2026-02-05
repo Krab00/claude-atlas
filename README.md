@@ -1,203 +1,175 @@
-# claude-atlas
+# krab00-claude-plugins
 
-Simple project file index for Claude Code - a "map" with descriptions of what's where.
+Claude Code plugins by Krab00 - file indexing, TODO lists, and more.
 
-## Problem
+## Plugins
 
-Claude Code uses Glob/Grep to search the project on every code question. This works, but:
-- Takes time
-- Uses context
-- Repeats the same searches
-
-## Solution
-
-Local file index with descriptions (tags). Claude checks the index first, then searches if needed.
+| Plugin | Description |
+|--------|-------------|
+| **claude-atlas** | File index with tags, dependency graph, reduces Glob/Grep usage |
+| **claude-todo** | Project-local TODO list, persists between sessions |
 
 ## Installation
 
-### Add as marketplace (recommended)
+### Add marketplace
 
-In Claude Code, run:
 ```
 /plugin marketplace add Krab00/claude-atlas
 ```
 
-Then install the plugin:
+### Install plugins
+
 ```
 /plugin install claude-atlas
+/plugin install claude-todo
 ```
 
-### Manual installation
+### Initialize in project
 
 ```bash
-git clone https://github.com/Krab00/claude-atlas.git ~/.claude/plugins/claude-atlas
+# Run init script (creates .claude/ with all files)
+~/.claude/plugins/krab00-claude-plugins/scripts/init.sh
+
+# Or let plugins create files on first use
 ```
 
-## Usage
+---
 
-### Initialize in a project
+# claude-atlas
 
-After installing the plugin, in any project:
+File index for Claude Code - a "map" with descriptions of what's where.
 
-```bash
-# Option 1: Script
-~/.claude/plugins/claude-atlas/scripts/init.sh
+## Problem
 
-# Option 2: Automatically
-# Just start using Claude Code - on first search
-# the skill will ask to create an index
-```
+Claude Code uses Glob/Grep on every search:
+- Takes time
+- Uses context
+- Repeats same searches
 
-### How it works
+## Solution
 
-1. **Hook intercepts Glob/Grep** - automatically checks `.claude/file-index.json`
-2. **Found in index** - adds matching paths as context (hit)
-3. **Not found** - searches normally, Claude adds result to index (miss)
-4. **After reading a file** - Claude automatically updates index
+Local file index with tags. Claude checks index first, then searches if needed.
 
-The plugin uses a PreToolUse hook to intercept all Glob and Grep calls before they execute, checking the index first and providing matching entries as additional context.
+## How it works
+
+1. **Hook intercepts Glob/Grep** - checks `.claude/file-index.json`
+2. **Found in index** - uses cached path (hit)
+3. **Not found** - searches normally, adds result to index (miss)
+4. **After reading file** - updates index with tags
 
 ## Index structure
-
-File `.claude/file-index.json`:
 
 ```json
 {
   "auth": {
     "path": "src/auth/oauth.ts",
-    "tags": "oauth google github login refresh token authentication",
+    "tags": "oauth google login token authentication",
     "hash": "a1b2c3d4"
-  },
-  "database": {
-    "path": "src/db/connection.ts",
-    "tags": "postgres mysql connection pool query database",
-    "hash": "e5f6g7h8"
   }
 }
 ```
 
-### Fields
+## Dependency graph
 
-- **key** - short name identifying the file
-- **path** - path to file
-- **tags** - keywords separated by spaces (easy to match)
-- **hash** - file hash for freshness check (git hash-object or md5)
-
-## Ignoring files
-
-File `.claude/atlas-ignore` (syntax like .gitignore):
-
-```
-node_modules/
-*.min.js
-dist/
-coverage/
-.git/
-```
-
-## Statistics
-
-File `.claude/atlas-stats.json`:
-
-```json
-{
-  "lookups": 42,
-  "hits": 35,
-  "misses": 7,
-  "updates": 12,
-  "last_review": "2025-01-15T10:00:00Z"
-}
-```
-
-### Measuring effectiveness
-
-- **Hit rate** = hits / lookups × 100%
-- Good index: >80% hit rate
-- Goal: fewer Glob/Grep calls, faster responses
-
-```bash
-# Check hit rate
-cat .claude/atlas-stats.json | jq '.hits / .lookups * 100'
-```
-
-## Validation
-
-File hash detects changes:
-- Hash matches → file is current, can use tags
-- Hash differs → file changed, need to read and update tags
-
-## Git-aware
-
-- With git: `git hash-object <path>` (fast, without reading entire file)
-- Without git: `md5 <path>` (fallback)
-
-## Plugin structure
-
-```
-claude-atlas/                    # Plugin (installed once)
-├── .claude-plugin/
-│   └── marketplace.json
-├── hooks/
-│   ├── hooks.json
-│   └── check-index.sh
-├── skills/
-│   └── claude-atlas/
-│       └── SKILL.md
-├── scripts/
-│   └── init.sh
-├── examples/
-└── README.md
-
-your-project/                    # Your project (after init)
-└── .claude/
-    ├── file-index.json          # File index with tags
-    ├── atlas-stats.json         # Hit/miss statistics
-    ├── atlas-ignore             # Patterns to ignore
-    └── graph/                   # Dependency graph
-        ├── oauth.json           # Per-file dependencies
-        ├── config.json
-        └── _reverse.json        # Reverse lookup
-```
-
-## Hooks
-
-The plugin includes a `PreToolUse` hook that:
-- Intercepts all Glob and Grep calls
-- Searches `.claude/file-index.json` for matching entries
-- Adds matches as `additionalContext` before the tool executes
-- Updates hit/miss statistics automatically
-
-This means the index is checked automatically - no need to invoke the skill manually.
-
-## Dependency Graph
-
-The plugin tracks file dependencies in `.claude/graph/`:
+Tracks imports in `.claude/graph/`:
 
 ```
 .claude/graph/
-├── oauth.json              # {"deps": ["./config", "jsonwebtoken"]}
-├── login-controller.json   # {"deps": ["./oauth", "./user-service"]}
-└── _reverse.json           # {"oauth": ["login-controller", "api-middleware"]}
+├── oauth.json         # {"deps": ["./config", "jsonwebtoken"]}
+└── _reverse.json      # {"oauth": ["login-controller"]}
 ```
 
-### How it helps
+When modifying a file, Claude warns about impact on dependent files.
 
-When you modify a file, Claude:
-1. Checks what imports that file (via `_reverse.json`)
-2. Warns you: "This file is imported by X, Y, Z - changes may affect them"
-3. After edit, updates the dependency graph
+## Statistics
 
-### Benefits
+```bash
+# Hit rate
+cat .claude/atlas-stats.json | jq '.hits / .lookups * 100'
+```
 
-- **Safer refactoring** - know impact before changing
-- **Better context** - understand file relationships
-- **Faster navigation** - "what uses this module?" without Grep
+---
 
-### Lazy loading
+# claude-todo
 
-- Only loads nodes needed for current operation
-- `_reverse.json` rebuilt on demand when stale
-- No full graph in context = minimal overhead
+Project-local TODO list with multiple named lists. Persists between sessions.
+
+**Trigger:** Include `:TODO:` anywhere in your message. Claude infers what you want from context.
+
+## Usage
+
+```
+User: "App idea for making salads :TODO:"
+Claude: Added to TODO (Normal): App idea for making salads
+
+User: "high priority :TODO: fix the login bug"
+Claude: Added to TODO (High): fix the login bug
+
+User: ":TODO: show"
+Claude: Your TODOs:
+  High (1): fix the login bug
+  Normal (1): App idea for making salads
+
+User: ":TODO: done with login bug"
+Claude: Marked as done: fix the login bug
+```
+
+## Multiple lists
+
+```
+User: ":TODO: create a list"
+Claude: What should I name the list? Any initial items to add?
+User: "bugs"
+Claude: Created list: bugs
+
+User: ":TODO: fix auth redirect"
+Claude: You have multiple lists (todo, bugs). Which one?
+User: "bugs"
+Claude: Added to bugs (Normal): fix auth redirect
+
+User: ":TODO: show all lists"
+Claude: Your lists:
+  - todo (default): 1 item
+  - bugs: 1 item
+
+User: ":TODO: show bugs"
+Claude:
+**bugs**
+Normal (1):
+- fix auth redirect
+
+User: ":TODO: delete a list"
+Claude: Which list do you want to delete?
+  - bugs (1 open item)
+```
+
+## File structure
+
+```
+.claude/
+├── todo.md              # Default list (always exists)
+└── lists/               # Named lists (created on demand)
+    ├── bugs.md
+    └── ideas.md
+```
+
+---
+
+## Project structure (after init)
+
+```
+your-project/
+└── .claude/
+    ├── file-index.json      # atlas: file index
+    ├── atlas-stats.json     # atlas: hit/miss stats
+    ├── atlas-ignore         # atlas: patterns to ignore
+    ├── graph/               # atlas: dependency graph
+    │   └── _reverse.json
+    ├── todo.md              # todo: default task list
+    └── lists/               # todo: named lists
+        ├── bugs.md
+        └── ideas.md
+```
 
 ## License
 
